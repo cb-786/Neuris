@@ -9,8 +9,10 @@ logger = logging.getLogger(__name__)
 class LLMService:
     def __init__(self):
         if not settings.GEMINI_API_KEY:
-            raise ValueError("GEMINI_API_KEY is not set.")
-        self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
+            logger.warning("GEMINI_API_KEY is not set. LLM features will fail at runtime.")
+            self._client = None
+        else:
+            self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
         self._model = settings.LLM_MODEL
         logger.info(f"LLMService ready | model={self._model}")
 
@@ -36,12 +38,17 @@ class LLMService:
         loop = asyncio.get_event_loop()
         
         def _call_api():
+            if not self._client:
+                raise ValueError("GEMINI_API_KEY is not configured.")
             return self._client.interactions.create(**kwargs)
             
         interaction = await loop.run_in_executor(None, _call_api)
         return interaction.output_text
 
     async def generate_embedding(self, text: str) -> list[float]:
+        if not self._client:
+            raise ValueError("GEMINI_API_KEY is not configured.")
+            
         logger.debug(f"LLM Embed ▶ text={text[:50]}...")
         response = await self._client.aio.models.embed_content(
             model='gemini-embedding-2',
