@@ -1,0 +1,94 @@
+version: "3.9"
+
+services:
+  # ── Neo4j Graph Database ─────────────────────────────────────────────────────
+  neo4j:
+    image: neo4j:5.20-community
+    container_name: neuris-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-changeme}
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_memory_heap_initial__size: 512m
+      NEO4J_dbms_memory_heap_max__size: 1g
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - neuris-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Redis Cache ──────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: neuris-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - neuris-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: neuris-backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    volumes:
+      - ./backend:/app
+      - ./credentials:/app/credentials:ro
+    ports:
+      - "8000:8000"
+    networks:
+      - neuris-net
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Vector Embeddings Init Script ────────────────────────────────────────────
+  vector-init:
+    build: 
+      context: ./backend
+    container_name: neuris_vector_init
+    command: python scripts/hydrate_vectors.py
+    env_file:
+      - ./backend/.env
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    networks:
+      - neuris-net
+    volumes:
+      - ./backend:/app
+    restart: "no"
+
+networks:
+  neuris-net:
+    driver: bridge
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  redis_data:
