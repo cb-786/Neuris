@@ -115,20 +115,25 @@ class Neo4jService:
         WITH primaryNode, score,
              collect(DISTINCT {
                  relationship: type(r1), 
+                 rel_props: properties(r1),
                  node_label: labels(neighbor1)[0],
                  node_name: neighbor1.name,
-                 node_id: neighbor1.id
+                 node_id: neighbor1.id,
+                 node_props: properties(neighbor1)
              }) AS hop1_context,
              collect(DISTINCT {
                  relationship: type(r2), 
+                 rel_props: properties(r2),
                  node_label: labels(neighbor2)[0],
                  node_name: neighbor2.name,
-                 node_id: neighbor2.id
+                 node_id: neighbor2.id,
+                 node_props: properties(neighbor2)
              }) AS hop2_context
              
         RETURN {
             id: primaryNode.id,
             name: primaryNode.name,
+            props: properties(primaryNode),
             score: score,
             context_neighborhood: [c IN (hop1_context + hop2_context) WHERE c.node_id IS NOT NULL]
         } AS result
