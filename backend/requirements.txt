@@ -26,3 +26,4 @@ redis>=5.0.1
 # ── SQLite Database ────────────────────────────────────────────────────────────
 aiosqlite>=0.20.0
 sqlalchemy[asyncio]>=2.0.30
+google-cloud-storage>=2.16.0
