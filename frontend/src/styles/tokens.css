@@ -1,0 +1,254 @@
+/* ============================================================================
+   NEURIS — DESIGN TOKENS
+   ---------------------------------------------------------------------------
+   NEURIS is a single, continuous dark space that memories float in. There is
+   no light theme: the ambient graph, the orb glow and the depth cues all
+   depend on emitted light against a near-black ground, and inverting that
+   would leave a different product.
+
+   Identity: VOID (near-black, blue-biased) + VIOLET (voice) + CYAN (memory).
+   Violet is what the user puts in; cyan is what NEURIS gives back. Every
+   accent in the app respects that split.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Ground ──────────────────────────────────────────────────────────── */
+  --void:       #05060b;   /* the space itself */
+  --void-deep:  #030409;   /* below the floor — sunken wells */
+  --deep:       #0a0c16;   /* first surface above the void */
+  --raised:     #10131f;   /* panels that need to separate */
+  --elevated:   #161a29;   /* menus, popovers, modals */
+
+  /* ── Voice (violet) ──────────────────────────────────────────────────── */
+  --violet-100: #ede9ff;
+  --violet-200: #d3c9ff;
+  --violet-300: #b6a4ff;
+  --violet-400: #977dff;
+  --violet-500: #7c5cff;   /* primary accent */
+  --violet-600: #6039eb;
+  --violet-700: #4a29b8;
+
+  /* ── Memory (cyan) ───────────────────────────────────────────────────── */
+  --cyan-100: #d5f7fd;
+  --cyan-200: #a5eefa;
+  --cyan-300: #67e0f3;
+  --cyan-400: #22d3ee;
+  --cyan-500: #0eafcb;
+  --cyan-600: #0b89a0;
+
+  /* ── Live signal (used only while the mic is actually open) ──────────── */
+  --live-400: #ff8f5c;
+  --live-500: #f5703c;
+
+  /* ── Neutral ramp, tuned against --void rather than pure grey ────────── */
+  --n-0:   #ffffff;
+  --n-50:  #eef0f8;
+  --n-100: #d8dbe9;
+  --n-200: #b3b8ce;
+  --n-300: #8a90ab;
+  --n-400: #666d88;
+  --n-500: #4c5269;
+  --n-600: #383d50;
+  --n-700: #272b3a;
+  --n-800: #1b1e2a;
+  --n-900: #12141d;
+  --n-950: #0a0b12;
+
+  /* ── Semantic hues ───────────────────────────────────────────────────── */
+  --green-500: #34d399;  --green-bg: rgba(52, 211, 153, 0.11);  --green-border: rgba(52, 211, 153, 0.3);
+  --amber-500: #fbbf24;  --amber-bg: rgba(251, 191, 36, 0.11);  --amber-border: rgba(251, 191, 36, 0.3);
+  --red-500:   #fb7185;  --red-bg:   rgba(251, 113, 133, 0.11); --red-border:   rgba(251, 113, 133, 0.3);
+  --blue-500:  #60a5fa;  --blue-bg:  rgba(96, 165, 250, 0.11);  --blue-border:  rgba(96, 165, 250, 0.3);
+  --violet-bg:     rgba(124, 92, 255, 0.12);
+  --violet-border: rgba(124, 92, 255, 0.32);
+  --accent-bg:     rgba(34, 211, 238, 0.11);
+  --accent-border: rgba(34, 211, 238, 0.3);
+
+  /* ── Node categories — the graph's own vocabulary ────────────────────── */
+  --node-person:  #7c5cff;
+  --node-topic:   #22d3ee;
+  --node-memory:  #8a90ab;
+  --node-event:   #fbbf24;
+  --node-entity:  #34d399;
+  --node-default: #666d88;
+
+  /* ── Surfaces (names kept stable for the existing UI primitives) ─────── */
+  --bg-app:      var(--void);
+  --bg-surface:  var(--deep);
+  --bg-raised:   var(--raised);
+  --bg-sunken:   var(--void-deep);
+  --bg-subtle:   rgba(255, 255, 255, 0.035);
+  --bg-elevated: var(--elevated);
+  --bg-hover:    rgba(255, 255, 255, 0.055);
+  --bg-active:   rgba(255, 255, 255, 0.09);
+  --bg-selected: rgba(124, 92, 255, 0.16);
+  --bg-overlay:  rgba(3, 4, 9, 0.76);
+  --bg-code:     #080a12;
+
+  /* Glass: the app's only container treatment. Panels are windows onto the
+     memory field behind them, never opaque cards stacked on a page. */
+  --glass:        rgba(16, 19, 31, 0.62);
+  --glass-strong: rgba(12, 15, 25, 0.88);
+  --glass-line:   rgba(255, 255, 255, 0.08);
+  --glass-blur:   18px;
+
+  /* ── Text ────────────────────────────────────────────────────────────── */
+  --text-primary:     #eef0f8;
+  --text-secondary:   #a8aec6;
+  --text-tertiary:    #7d84a0;
+  --text-disabled:    #565c73;
+  --text-placeholder: #666d88;
+  --text-inverse:     #05060b;
+  --text-accent:      var(--cyan-300);
+  --text-voice:       var(--violet-300);
+  --text-on-accent:   #04141a;
+
+  /* ── Borders ─────────────────────────────────────────────────────────── */
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-strong:  rgba(255, 255, 255, 0.18);
+  --border-accent:  rgba(34, 211, 238, 0.4);
+  --border-voice:   rgba(124, 92, 255, 0.4);
+  --border-focus:   var(--cyan-300);
+
+  /* ── Interactive ─────────────────────────────────────────────────────── */
+  --accent:       var(--cyan-400);
+  --accent-hover: var(--cyan-300);
+  --accent-press: var(--cyan-200);
+  --accent-quiet: rgba(34, 211, 238, 0.12);
+  --accent-300:   var(--cyan-300);
+  --accent-400:   var(--cyan-400);
+  --accent-500:   var(--cyan-500);
+  --accent-600:   var(--cyan-600);
+  --focus-ring:   rgba(34, 211, 238, 0.55);
+
+  /* ── Glow — the core visual material. Never used as generic decoration;
+        reserved for things that are actually emitting: the orb, live audio,
+        the active route, a selected node. ────────────────────────────────── */
+  --glow-voice-sm: 0 0 12px rgba(124, 92, 255, 0.4);
+  --glow-voice-md: 0 0 32px rgba(124, 92, 255, 0.34), 0 0 8px rgba(124, 92, 255, 0.5);
+  --glow-voice-lg: 0 0 90px rgba(124, 92, 255, 0.3), 0 0 34px rgba(124, 92, 255, 0.4);
+  --glow-mem-sm:   0 0 12px rgba(34, 211, 238, 0.4);
+  --glow-mem-md:   0 0 32px rgba(34, 211, 238, 0.3), 0 0 8px rgba(34, 211, 238, 0.45);
+  --glow-mem-lg:   0 0 90px rgba(34, 211, 238, 0.26), 0 0 34px rgba(34, 211, 238, 0.36);
+  --glow-live:     0 0 40px rgba(245, 112, 60, 0.4), 0 0 12px rgba(245, 112, 60, 0.55);
+
+  /* ── Typography ──────────────────────────────────────────────────────── */
+  /* Display: Space Grotesk. Chosen for the slightly engineered letterforms —
+     it reads as scientific instrumentation rather than marketing, and it is
+     always set very tight so headlines feel machined, not typed. */
+  --font-display: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  --fs-2xs:  0.6875rem;
+  --fs-xs:   0.75rem;
+  --fs-sm:   0.8125rem;
+  --fs-md:   0.875rem;
+  --fs-base: 0.9375rem;
+  --fs-lg:   1.0625rem;
+  --fs-xl:   1.25rem;
+  --fs-2xl:  1.5rem;
+  --fs-3xl:  1.875rem;
+  --fs-4xl:  2.25rem;
+  --fs-display: clamp(2.25rem, 1.3rem + 3.6vw, 3.75rem);
+  /* Capped below the display face's natural urge to fill the viewport — the
+     orb, not the headline, is meant to be the focal point of the hero. */
+  --fs-hero:    clamp(2.5rem, 1.4rem + 4.6vw, 4.5rem);
+
+  --lh-tight:   1.06;
+  --lh-snug:    1.3;
+  --lh-normal:  1.55;
+  --lh-relaxed: 1.7;
+
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  --tracking-display: -0.035em;  /* the machined-headline setting */
+  --tracking-tight:   -0.018em;
+  --tracking-normal:  -0.008em;
+  --tracking-wide:    0.02em;
+  --tracking-caps:    0.16em;    /* eyebrows and rail labels */
+
+  /* ── Spacing — 4px rhythm ────────────────────────────────────────────── */
+  --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;  --sp-4: 1rem;
+  --sp-5: 1.25rem;  --sp-6: 1.5rem;   --sp-7: 1.75rem;  --sp-8: 2rem;
+  --sp-10: 2.5rem;  --sp-12: 3rem;    --sp-16: 4rem;    --sp-20: 5rem;
+  --sp-24: 6rem;    --sp-32: 8rem;
+
+  /* ── Radius ──────────────────────────────────────────────────────────── */
+  --r-xs:   5px;
+  --r-sm:   7px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-xl:   18px;
+  --r-2xl:  24px;
+  --r-full: 9999px;
+
+  /* ── Elevation ───────────────────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 28px 80px rgba(0, 0, 0, 0.7);
+
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  --rail-w:         248px;
+  --rail-w-narrow:  72px;
+  --mobilebar-h:    62px;
+  /* Floating dock: its own height plus the gap it sits above the edge. */
+  --dock-h:         96px;
+  --content-max:    1240px;
+  --content-narrow: 780px;
+  --control-h-sm:   30px;
+  --control-h-md:   36px;
+  --control-h-lg:   42px;
+
+  /* ── Motion — slow, weighted, never bouncy ───────────────────────────── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-glide:  cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.28, 0.64, 1);
+  --dur-fast:  140ms;
+  --dur-mid:   240ms;
+  --dur-slow:  420ms;
+  --dur-scene: 900ms;   /* mode changes and formation stages */
+
+  --z-field:  0;
+  --z-base:   1;
+  --z-sticky: 20;
+  --z-rail:   40;
+  --z-drawer: 60;
+  --z-modal:  80;
+  --z-toast:  100;
+}
+
+/* Legacy aliases. The previous build shipped a teal `--accent-*` ramp and a
+   light theme; keeping these pointed at the new palette means the existing UI
+   primitives restyle themselves instead of needing a rewrite. */
+:root {
+  --accent-50:  rgba(34, 211, 238, 0.08);
+  --accent-100: rgba(34, 211, 238, 0.14);
+  --accent-200: var(--cyan-200);
+  --accent-700: var(--cyan-600);
+  --accent-800: var(--cyan-600);
+  --motif-line: rgba(255, 255, 255, 0.05);
+  --motif-node: rgba(124, 92, 255, 0.3);
+  --n-25:  var(--n-950);
+  --n-150: var(--n-800);
+  --border-subtle-solid: #1b1e2a;
+}
+
+/* The app is dark-only, so an explicit data-theme attribute is a no-op rather
+   than a second palette to maintain. */
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
