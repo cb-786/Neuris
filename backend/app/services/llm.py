@@ -8,50 +8,59 @@ logger = logging.getLogger(__name__)
 
 class LLMService:
     def __init__(self):
-        if not settings.GEMINI_API_KEY:
-            logger.warning("GEMINI_API_KEY is not set. LLM features will fail at runtime.")
+        # We use Vertex AI to consume GCP credits instead of standard GEMINI_API_KEY.
+        # It automatically picks up the GOOGLE_APPLICATION_CREDENTIALS service account.
+        try:
+            self._client = genai.Client(
+                vertexai=True, 
+                project=settings.GCP_PROJECT_ID, 
+                location="us-central1"
+            )
+        except Exception as e:
+            logger.warning(f"Could not initialize Vertex AI client: {e}")
             self._client = None
-        else:
-            self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
+            
         self._model = settings.LLM_MODEL
-        logger.info(f"LLMService ready | model={self._model}")
+        logger.info(f"LLMService ready | model={self._model} (Vertex AI)")
 
     async def complete(self, prompt: str, system: str | None = None, json_mode: bool = False) -> str:
+        if not self._client:
+            raise ValueError("Vertex AI client is not configured. Check your GCP service account.")
+            
         logger.debug(f"LLM ▶ model={self._model} prompt={prompt[:120]}...")
         
-        # Build generation config if needed
-        generation_config = {}
-        if json_mode:
-            generation_config["response_mime_type"] = "application/json"
-            generation_config["temperature"] = 0.1
-            
-        kwargs = {
-            "model": self._model,
-            "input": prompt
-        }
-        if system:
-            kwargs["system_instruction"] = system
-        if generation_config:
-            kwargs["generation_config"] = generation_config
-            
-        import asyncio
-        loop = asyncio.get_event_loop()
+        config = types.GenerateContentConfig(
+            temperature=0.1 if json_mode else 0.7,
+            response_mime_type="application/json" if json_mode else "text/plain",
+            system_instruction=system if system else None
+        )
         
-        def _call_api():
-            if not self._client:
-                raise ValueError("GEMINI_API_KEY is not configured.")
-            return self._client.interactions.create(**kwargs)
-            
-        interaction = await loop.run_in_executor(None, _call_api)
-        return interaction.output_text
+        models_to_try = [self._model, "gemini-2.5-flash", "gemini-2.5-pro"]
+        seen = set()
+        models_to_try = [m for m in models_to_try if not (m in seen or seen.add(m))]
+        
+        last_error = None
+        for model_name in models_to_try:
+            try:
+                response = await self._client.aio.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=config
+                )
+                return response.text
+            except Exception as e:
+                logger.warning(f"Model {model_name} failed in complete(): {e}. Trying fallback...")
+                last_error = e
+                
+        raise last_error
 
     async def generate_embedding(self, text: str) -> list[float]:
         if not self._client:
-            raise ValueError("GEMINI_API_KEY is not configured.")
+            raise ValueError("Vertex AI client is not configured. Check your GCP service account.")
             
         logger.debug(f"LLM Embed ▶ text={text[:50]}...")
         response = await self._client.aio.models.embed_content(
-            model='gemini-embedding-2',
+            model=settings.EMBEDDING_MODEL,
             contents=text,
             config=types.EmbedContentConfig(output_dimensionality=768)
         )

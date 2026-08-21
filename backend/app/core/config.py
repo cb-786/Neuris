@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # ── Gemini LLM ────────────────────────────────────────────────────────────
     GEMINI_API_KEY: str = ""
-    LLM_MODEL: str = "gemini-3.6-flash"
+    LLM_MODEL: str = "gemini-2.5-flash"
     EMBEDDING_MODEL: str = "text-embedding-004"
 
     # ── Google Cloud STT ──────────────────────────────────────────────────────
@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS: str = "/app/credentials/gcp-service-account.json"
     STT_LANGUAGE_CODE: str = "en-US"
     STT_MAX_SPEAKERS: int = 6
+    GCP_BUCKET_NAME: str = "anubhav0101neuris"
+    GCP_STT_BUCKET_NAME: str = "anubhav0101neuris"
     STT_MODEL: str = "chirp_3"
 
     # ── Neo4j ─────────────────────────────────────────────────────────────────

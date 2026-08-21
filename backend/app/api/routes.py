@@ -132,7 +132,20 @@ async def get_memories():
     async with async_session_factory() as session:
         result = await session.execute(select(Memory).order_by(Memory.created_at.desc()).limit(50))
         memories = result.scalars().all()
-        return {"status": "success", "data": [{"id": m.id, "summary": m.summary, "content": m.content[:100]} for m in memories]}
+        return {
+            "status": "success", 
+            "data": [
+                {
+                    "id": m.id, 
+                    "conversation_id": m.conversation_id,
+                    "summary": m.summary, 
+                    "content": m.content,
+                    "created_at": m.created_at.isoformat() if m.created_at else None,
+                    "entity_ids": m.entity_ids
+                } 
+                for m in memories
+            ]
+        }
 
 @router.get("/analytics/summary")
 async def get_analytics_summary():
